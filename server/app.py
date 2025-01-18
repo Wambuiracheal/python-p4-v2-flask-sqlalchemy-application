@@ -14,7 +14,7 @@ migrate = Migrate(app, db)
 
 db.init_app(app)
 
-# add views here 
+
 @app.route('/')
 def index():
     response = make_response(
@@ -23,13 +23,19 @@ def index():
     )
     return response
 
+
 @app.route('/pets/<int:id>')
 def pet_by_id(id):
     pet = Pet.query.filter(Pet.id == id).first()
-    response_body = f'<p>{pet.name} {pet.species}</p>'
 
-    response = make_response(response_body, 200)
+    if pet:
+        response_body = f'<p>{pet.name} {pet.species}</p>'
+        response_status = 200
+    else:
+        response_body = f'<p>Pet {id} not found</p>'
+        response_status = 404
 
+    response = make_response(response_body, response_status)
     return response
 
 
